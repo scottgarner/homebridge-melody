@@ -2,7 +2,7 @@
   "name": "homebridge-melody",
   "version": "0.0.1",
   "description": "Experimental plugin for home control with sequences of MIDI notes.",
-  "main": "dist/accessory.js",
+  "main": "dist/static-platform.js",
   "scripts": {
     "clean": "rimraf ./dist",
     "build": "rimraf ./dist && tsc",
@@ -24,7 +24,7 @@
   ],
   "repository": {
     "type": "git",
-    "url":"git@github.com:scottgarner/homebridge-melody.git"
+    "url": "git@github.com:scottgarner/homebridge-melody.git"
   },
   "bugs": {
     "url": "https://github.com/scottgarner/homebridge-melody/issues"
