@@ -14,6 +14,10 @@ interface MelodyConfig extends AccessoryConfig {
   sequence: number[];
 }
 
+interface MelodyPlatformConfig extends PlatformConfig {
+  port?: number
+}
+
 const midi = require('midi');
 let hap: HAP;
 
@@ -25,18 +29,32 @@ export = (api: API) => {
 class MelodyPlatform implements StaticPlatformPlugin {
 
   private readonly log: Logging;
-  private readonly config: PlatformConfig;
+  private readonly config: MelodyPlatformConfig;
   private readonly melodyAccessories: MelodyAccessory[] = [];
 
   private buffer: number[] = [];
 
-  constructor(log: Logging, config: PlatformConfig, api: API) {
+  constructor(log: Logging, config: MelodyPlatformConfig, api: API) {
     this.log = log;
     this.config = config;
 
-    // Midi setup.
+    const port: number | undefined = config.port;
+
+    // MIDI out setup.
+    const output = new midi.Output();
+    if (config.port != undefined) {
+      const count = output.getPortCount();
+      log.info("Available MIDI output ports: " + output.getPortCount());
+      for (let i = 0; i < count; i++) {
+        let name = output.getPortName(i);
+        log.info(i.toString(), name);
+      }
+      output.openPort(config.port);
+    }
+
+    const input = new midi.Input();
+    // MIDI in setup.
     {
-      const input = new midi.Input();
 
       log.info("Available MIDI ports: " + input.getPortCount());
       log.info(input.getPortName(1));
@@ -46,6 +64,11 @@ class MelodyPlatform implements StaticPlatformPlugin {
         if (message[0] == 144) this.buffer.push(message[1]);
         // Check the buffer for matches.
         this.checkBuffer();
+
+        // Send to output.
+        if (output.isPortOpen()) {
+          output.sendMessage(message);
+        }
       });
 
       input.openPort(1);
