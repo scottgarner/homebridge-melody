@@ -2,7 +2,7 @@
   "name": "homebridge-melody",
   "version": "0.0.1",
   "description": "Experimental plugin for home control with sequences of MIDI notes.",
-  "main": "dist/static-platform.js",
+  "main": "dist/melody.js",
   "scripts": {
     "clean": "rimraf ./dist",
     "build": "rimraf ./dist && tsc",

@@ -77,9 +77,10 @@ class MelodyPlatform implements StaticPlatformPlugin {
 
   accessories(callback: (foundAccessories: AccessoryPlugin[]) => void): void {
 
+    let index: number = 0;
     this.config.accessories.forEach((accessoryData: MelodyConfig) => {
       this.log.info(JSON.stringify(accessoryData));
-      this.melodyAccessories.push(new MelodyAccessory(this.log, accessoryData));
+      this.melodyAccessories.push(new MelodyAccessory(this.log, accessoryData, index++));
     });
 
     callback(<AccessoryPlugin[]>this.melodyAccessories);
@@ -133,7 +134,7 @@ class MelodyAccessory implements AccessoryPlugin {
   private readonly switchService: Service;
   private readonly informationService: Service;
 
-  constructor(log: Logging, melodyConfig: MelodyConfig) {
+  constructor(log: Logging, melodyConfig: MelodyConfig, index: number) {
     // Homebridge setup.
     {
       this.log = log;
@@ -148,13 +149,21 @@ class MelodyAccessory implements AccessoryPlugin {
           validValues: [hap.Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS]
         });
 
+      this.switchService.setCharacteristic(hap.Characteristic.ServiceLabelIndex, index + 1);
+
       this.informationService = new hap.Service.AccessoryInformation();
 
     }
   }
 
   trigger() {
-    this.switchService.setCharacteristic(hap.Characteristic.ProgrammableSwitchEvent, 0);
+    this.log.info("Trigger single press!");
+    //   this.switchService.setCharacteristic(
+    // hap.Characteristic.ProgrammableSwitchEvent, 
+    // hap.Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS
+    //   );
+    this.switchService.getCharacteristic(hap.Characteristic.ProgrammableSwitchEvent)
+      .setValue(hap.Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS)
   }
 
   getServices(): Service[] {
