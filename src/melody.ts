@@ -40,22 +40,9 @@ class MelodyPlatform implements StaticPlatformPlugin {
 
     const port: number | undefined = config.port;
 
-    // MIDI out setup.
-    const output = new midi.Output();
-    if (config.port != undefined) {
-      const count = output.getPortCount();
-      log.info("Available MIDI output ports: " + output.getPortCount());
-      for (let i = 0; i < count; i++) {
-        let name = output.getPortName(i);
-        log.info(i.toString(), name);
-      }
-      output.openPort(config.port);
-    }
-
     const input = new midi.Input();
     // MIDI in setup.
     {
-
       log.info("Available MIDI ports: " + input.getPortCount());
       log.info(input.getPortName(1));
 
@@ -64,24 +51,22 @@ class MelodyPlatform implements StaticPlatformPlugin {
         if (message[0] == 144) this.buffer.push(message[1]);
         // Check the buffer for matches.
         this.checkBuffer();
-
-        // Send to output.
-        if (output.isPortOpen()) {
-          output.sendMessage(message);
-        }
       });
 
-      input.openPort(1);
+      input.openVirtualPort("Homebridge Melody");
     }
+
   }
 
   accessories(callback: (foundAccessories: AccessoryPlugin[]) => void): void {
 
-    let index: number = 0;
-    this.config.accessories.forEach((accessoryData: MelodyConfig) => {
-      this.log.info(JSON.stringify(accessoryData));
-      this.melodyAccessories.push(new MelodyAccessory(this.log, accessoryData, index++));
-    });
+    if (this.config && this.config.accessories) {
+      let index: number = 0;
+      this.config.accessories.forEach((accessoryData: MelodyConfig) => {
+        this.log.info(JSON.stringify(accessoryData));
+        this.melodyAccessories.push(new MelodyAccessory(this.log, accessoryData, index++));
+      });
+    }
 
     callback(<AccessoryPlugin[]>this.melodyAccessories);
   }

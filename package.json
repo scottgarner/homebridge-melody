@@ -1,6 +1,7 @@
 {
   "name": "homebridge-melody",
-  "version": "0.0.1",
+  "displayName": "Homebridge Melody",
+  "version": "0.0.2",
   "description": "Experimental plugin for home control with sequences of MIDI notes.",
   "main": "dist/melody.js",
   "scripts": {
@@ -12,7 +13,8 @@
   },
   "author": "Scott Garner <hello@scottmadethis.net>",
   "engines": {
-    "homebridge": ">=1.0.0"
+    "node": "^18.17.0 || ^20.9.0",
+    "homebridge": "^1.6.0"
   },
   "keywords": [
     "homebridge-plugin"
@@ -29,13 +31,13 @@
   "bugs": {
     "url": "https://github.com/scottgarner/homebridge-melody/issues"
   },
-  "devDependencies": {
-    "@types/node": "10.17.19",
-    "homebridge": "^1.0.4",
-    "rimraf": "^3.0.2",
-    "typescript": "^3.8.3"
-  },
   "dependencies": {
     "midi": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.20",
+    "homebridge": "^1.6.0",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
   }
 }
